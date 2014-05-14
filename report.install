@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * Implements hook_schema()
+ */
+function report_schema() {
+  $schema['reports'] = array(
+    'fields' => array(
+      'id'           => array('type' => 'serial',  'not null' => TRUE, 'unsigned' => TRUE),
+      'machine_name' => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'weight'       => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'status'       => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'validation'   => array('type' => 'text'),
+    ),
+    'primary key' => array('id'),
+  );
+  
+  $schema['report_details'] = array(
+    'fields' => array(
+      'id'        => array('type' => 'serial',  'not null' => TRUE, 'unsigned' => TRUE),
+      'report_id' => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'language'  => array('type' => 'varchar', 'not null' => TRUE, 'length' => 5, 'default' => ''),
+      'title'     => array('type' => 'varchar', 'not null' => TRUE, 'length' => 255, 'default' => ''),
+    ),
+    'primary key' => array('id'),
+  );
+  
+  $schema['report_params'] = array(
+    'fields' => array(
+      'id'            => array('type' => 'serial',  'not null' => TRUE, 'unsigned' => TRUE),
+      'report_id'     => array('type' => 'int',     'not null' => TRUE, 'unsigned' => TRUE),
+      'field_id'      => array('type' => 'int',     'not null' => TRUE, 'unsigned' => TRUE),
+      'param_type'    => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'machine_name'  => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'table_name'    => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'type'          => array('type' => 'varchar', 'not null' => TRUE, 'length' => 32, 'default' => ''),
+      'weight'        => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'category'      => array('type' => 'varchar', 'not null' => TRUE, 'length' => 255, 'default' => ''),
+      'field_size'    => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'required'      => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'default_value' => array('type' => 'varchar', 'not null' => TRUE, 'length' => 255, 'default' => ''),
+      'source'        => array('type' => 'text'),
+    ),
+    'primary key' => array('id'),
+  );
+  
+  $schema['report_param_details'] = array(
+    'fields' => array(
+      'id'          => array('type' => 'serial',  'not null' => TRUE, 'unsigned' => TRUE),
+      'param_id'    => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'language'    => array('type' => 'varchar', 'not null' => TRUE, 'length' => 5, 'default' => ''),
+      'title'       => array('type' => 'varchar', 'not null' => TRUE, 'length' => 255, 'default' => ''),
+      'description' => array('type' => 'varchar', 'not null' => TRUE, 'length' => 255, 'default' => ''),
+    ),
+    'primary key' => array('id'),
+  );
+  
+  $schema['report_conditions'] = array(
+    'fields' => array(
+      'id'          => array('type' => 'serial',  'not null' => TRUE, 'unsigned' => TRUE),
+      'report_id'   => array('type' => 'int',     'not null' => TRUE, 'default' => 0),
+      'table_name'  => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'query_key'   => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'local_key'   => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'field_name'  => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+      'expression'  => array('type' => 'varchar', 'not null' => TRUE, 'length' => 64, 'default' => ''),
+    ),
+    'primary key' => array('id'),
+  );
+  
+  return $schema;
+}
+
+/**
+ * Implements hook_install()
+ */
+function report_install() {
+  drupal_install_schema('report');
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+function report_uninstall() {
+  drupal_uninstall_schema('report');
+}

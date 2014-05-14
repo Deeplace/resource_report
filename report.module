@@ -1,0 +1,159 @@
+<?php
+
+require_once 'report.api.inc';
+
+/**
+ * Implements hook_perm()
+ */
+function report_perm() {
+  $perms = array(
+    'report admin',
+    'report access',
+  );
+  
+  $reports = report_get_list();
+  foreach ($reports as $machine_name => $report) {
+    $perms[] = 'report access ' . $machine_name;
+  }
+  
+  return $perms;
+}
+
+/**
+ * Implements hook_menu()
+ */
+function report_menu() {
+  $items = array();
+  
+  $items['report'] = array(
+    'title'            => 'Report',
+    'page callback'    => 'report_list_page',
+    'access arguments' => array('report access'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.pages.inc',
+  );
+  
+  $items['report/add'] = array(
+    'title'            => 'Add report',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_edit_form'),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report'] = array(
+    'title callback'   => 'report_get_title',
+    'title arguments'  => array(1),
+    'page callback'    => 'report_view_page',
+    'page arguments'   => array(1),
+    'access callback'  => 'report_check_access',
+    'access arguments' => array(1),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.pages.inc',
+  );
+  
+  $items['report/%report/view'] = array(
+    'title'            => 'View',
+    'type'             => MENU_DEFAULT_LOCAL_TASK,
+    'weight'           => 0,
+  );
+  
+  $items['report/%report/admin'] = array(
+    'title'            => 'Admin',
+    'page callback'    => 'report_admin_page',
+    'page arguments'   => array(1),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_LOCAL_TASK,
+    'weight'           => 1,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/export'] = array(
+    'title'            => 'Export report',
+    'page callback'    => 'report_export_page',
+    'page arguments'   => array(1),
+    'access callback'  => 'report_check_access',
+    'access arguments' => array(1),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.pages.inc',
+  );
+  
+  $items['report/%report/admin/edit'] = array(
+    'title'            => 'Edit',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_edit_form', 1),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/delete'] = array(
+    'title'            => 'Delete',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_delete_form', 1),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/param/add'] = array(
+    'title'            => 'Add parameter',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_param_edit_form', 1),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/param/%/edit'] = array(
+    'title'            => 'Edit parameter',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_param_edit_form', 1, 4),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/param/%/delete'] = array(
+    'title'            => 'Delete parameter',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_param_delete_form', 1, 4),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/condition/add'] = array(
+    'title'            => 'Add condition',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_condition_edit_form', 1),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/condition/%/edit'] = array(
+    'title'            => 'Edit condition',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_condition_edit_form', 1, 4),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  $items['report/%report/admin/condition/%/delete'] = array(
+    'title'            => 'Delete condition',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('report_condition_delete_form', 1, 4),
+    'access arguments' => array('report admin'),
+    'type'             => MENU_CALLBACK,
+    'file'             => 'report.admin.inc',
+  );
+  
+  return $items;
+}
+
+function report_get_title($report) {
+  return $report->title;
+}
